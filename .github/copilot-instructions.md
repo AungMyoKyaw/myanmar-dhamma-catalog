@@ -3,4 +3,3 @@
 - Search the codebase thoroughly before suggesting solutions
 - Search the internet for best practices and up-to-date information
 - Think it twice before doing anything
-- For making pull requests you can use az devops cli
