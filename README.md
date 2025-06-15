@@ -86,6 +86,13 @@ myanmar-dhamma-catalog/
 
 ## 📊 Generated Output
 
+### 📥 Dataset Downloads
+
+Download the pre-built datasets:
+
+- **CSV Format**: [`dhamma_dataset.csv`](./data/dhamma_dataset.csv) - Structured spreadsheet format for analysis and import
+- **SQLite Database**: [`dhamma_dataset.db`](./data/dhamma_dataset.db) - Queryable database with indexed tables
+
 ### CSV Dataset (`data/dhamma_dataset.csv`)
 Structured dataset with columns:
 - ID, Title, Speaker, Content Type
@@ -158,7 +165,7 @@ This project:
 
 ## 📄 License
 
-ISC License - See LICENSE file for details.
+MIT License - See LICENSE file for details.
 
 ## 🤝 Contributing
 
