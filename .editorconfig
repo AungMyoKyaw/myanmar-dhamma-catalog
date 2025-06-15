@@ -1,0 +1,66 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# Top-most EditorConfig file
+root = true
+
+# All files
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Code files - 2 spaces
+[*.{js,ts,jsx,tsx,json,yml,yaml}]
+indent_style = space
+indent_size = 2
+
+# Web files - 2 spaces
+[*.{html,css,scss,sass,less,vue}]
+indent_style = space
+indent_size = 2
+
+# Config files - 2 spaces
+[*.{json,yml,yaml,toml}]
+indent_style = space
+indent_size = 2
+
+# Documentation - 2 spaces
+[*.{md,mdx}]
+indent_style = space
+indent_size = 2
+trim_trailing_whitespace = false
+
+# Package files
+[package.json]
+indent_style = space
+indent_size = 2
+
+# TypeScript config
+[tsconfig.json]
+indent_style = space
+indent_size = 2
+
+# CSV files - keep as is for data integrity
+[*.csv]
+trim_trailing_whitespace = false
+
+# Makefiles - override default (usually tabs) to use 2 spaces
+[{Makefile,makefile,*.mk}]
+indent_style = space
+indent_size = 2
+
+# Shell scripts
+[*.{sh,bash,zsh}]
+indent_style = space
+indent_size = 2
+
+# Python files (if any) - override PEP 8 to use 2 spaces
+[*.py]
+indent_style = space
+indent_size = 2
+
+# SQL files
+[*.sql]
+indent_style = space
+indent_size = 2
