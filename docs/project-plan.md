@@ -137,7 +137,7 @@ class DhammaScraper {
     "https://www.dhammadownload.com/AudioInMyanmar.htm",
     "https://www.dhammadownload.com/VideoInMyanmar.htm",
     "https://www.dhammadownload.com/EBooksInMyanmar.htm",
-    "https://www.dhammadownload.com/AbhidhammaInMyanmar.htm",
+    "https://www.dhammadownload.com/AbhidhammaInMyanmar.htm"
   ];
 
   async scrapeContent(): Promise<ContentItem[]> {
@@ -165,7 +165,7 @@ class DhammaScraper {
               fileUrl: this.normalizeUrl(href, url),
               language: "Myanmar",
               sourcePage: url,
-              scrapedDate: new Date().toISOString(),
+              scrapedDate: new Date().toISOString()
             };
 
             allContent.push(contentItem);
@@ -256,7 +256,7 @@ class CsvGenerator {
     { id: "description", title: "Description" },
     { id: "dateRecorded", title: "Date Recorded" },
     { id: "sourcePage", title: "Source Page" },
-    { id: "scrapedDate", title: "Scraped Date" },
+    { id: "scrapedDate", title: "Scraped Date" }
   ];
 
   async generateCsv(
@@ -269,13 +269,13 @@ class CsvGenerator {
     // Add IDs to content items
     const contentWithIds = content.map((item, index) => ({
       ...item,
-      id: index + 1,
+      id: index + 1
     }));
 
     // Create CSV writer
     const csvWriter = createCsvWriter.createObjectCsvWriter({
       path: outputFile,
-      header: this.csvHeaders,
+      header: this.csvHeaders
     });
 
     // Write to CSV
@@ -293,7 +293,7 @@ class CsvGenerator {
       totalRecords: content.length,
       contentTypes: this.groupBy(content, "contentType"),
       languages: this.groupBy(content, "language"),
-      sourcePages: this.groupBy(content, "sourcePage"),
+      sourcePages: this.groupBy(content, "sourcePage")
     };
 
     await fs.writeJson("data/csv_summary.json", summary, { spaces: 2 });
@@ -414,7 +414,7 @@ class SqliteBuilder {
       "CREATE INDEX IF NOT EXISTS idx_content_type ON dhamma_content(content_type)",
       "CREATE INDEX IF NOT EXISTS idx_speaker ON dhamma_content(speaker)",
       "CREATE INDEX IF NOT EXISTS idx_category ON dhamma_content(category)",
-      "CREATE INDEX IF NOT EXISTS idx_language ON dhamma_content(language)",
+      "CREATE INDEX IF NOT EXISTS idx_language ON dhamma_content(language)"
     ];
 
     indexes.forEach((indexSql) => this.db.exec(indexSql));
@@ -493,7 +493,7 @@ class SqliteBuilder {
         GROUP BY language
       `
         )
-        .all(),
+        .all()
     };
 
     console.log("\n📊 Database Statistics:");
@@ -584,7 +584,7 @@ class MyanmarDhammaScraper extends DhammaScraper {
     "https://www.dhammadownload.com/AbhidhammaInMyanmar.htm",
     // Additional Myanmar sections
     "https://www.dhammadownload.com/DhammaTalksInMyanmar.htm",
-    "https://www.dhammadownload.com/Paritta-Myanmar.htm",
+    "https://www.dhammadownload.com/Paritta-Myanmar.htm"
   ];
 
   async scrapeContent(): Promise<ContentItem[]> {
@@ -600,8 +600,8 @@ class MyanmarDhammaScraper extends DhammaScraper {
           headers: {
             "User-Agent":
               "Mozilla/5.0 (compatible; DhammaDataset/1.0; +educational-purpose)",
-            "Accept-Charset": "utf-8",
-          },
+            "Accept-Charset": "utf-8"
+          }
         });
 
         const $ = cheerio.load(response.data);
@@ -627,7 +627,7 @@ class MyanmarDhammaScraper extends DhammaScraper {
       'a[href*=".mp4"]',
       'a[href*=".pdf"]',
       'a[href*=".doc"]',
-      'a[href*="MediaInfo"]', // Common on Myanmar pages
+      'a[href*="MediaInfo"]' // Common on Myanmar pages
     ];
 
     selectors.forEach((selector) => {
@@ -643,7 +643,7 @@ class MyanmarDhammaScraper extends DhammaScraper {
             language: "Myanmar",
             category: this.extractCategory(url),
             sourcePage: url,
-            scrapedDate: new Date().toISOString(),
+            scrapedDate: new Date().toISOString()
           };
 
           allContent.push(contentItem);

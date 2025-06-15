@@ -7,7 +7,7 @@ A comprehensive catalog of Myanmar Buddhist dhamma content, creating structured 
 This project scrapes metadata from Buddhist content websites (specifically dhammadownload.com) to create a structured dataset of Myanmar dhamma resources including:
 
 - 🎵 Audio teachings and discourses
-- 🎥 Video content and lectures  
+- 🎥 Video content and lectures
 - 📚 E-books and written materials
 - 📖 Abhidhamma texts and commentaries
 
@@ -26,7 +26,7 @@ The goal is to preserve and catalog Myanmar Buddhist educational content in acce
 
 ### Prerequisites
 
-- Node.js 16+ 
+- Node.js 16+
 - npm or yarn
 
 ### Installation
@@ -94,19 +94,25 @@ Download the pre-built datasets:
 - **SQLite Database**: [`dhamma_dataset.db`](./data/dhamma_dataset.db) - Queryable database with indexed tables
 
 ### CSV Dataset (`data/dhamma_dataset.csv`)
+
 Structured dataset with columns:
+
 - ID, Title, Speaker, Content Type
 - File URL, Language, Category
 - Description, Source Page, Scraped Date
 
 ### SQLite Database (`data/dhamma_dataset.db`)
+
 Queryable database with:
+
 - Indexed tables for fast searching
 - Support for complex queries
 - Data integrity constraints
 
 ### Analytics Report (`data/analytics_report.md`)
+
 Comprehensive analysis including:
+
 - Content distribution statistics
 - Speaker and category analysis
 - Data quality metrics
@@ -115,8 +121,9 @@ Comprehensive analysis including:
 ## 🔍 Data Sources
 
 Currently scrapes from:
+
 - `AudioInMyanmar.htm` - Audio teachings
-- `VideoInMyanmar.htm` - Video content  
+- `VideoInMyanmar.htm` - Video content
 - `EBooksInMyanmar.htm` - Digital books
 - `AbhidhammaInMyanmar.htm` - Abhidhamma texts
 
@@ -146,17 +153,18 @@ Currently scrapes from:
 
 ## 📝 Scripts Reference
 
-| Script | Description |
-|--------|-------------|
-| `npm run scrape` | Scrape content from websites |
+| Script                 | Description                      |
+| ---------------------- | -------------------------------- |
+| `npm run scrape`       | Scrape content from websites     |
 | `npm run generate-csv` | Create CSV dataset from raw data |
-| `npm run build-db` | Build SQLite database |
-| `npm run analytics` | Generate comprehensive analytics |
-| `npm run all` | Run complete pipeline |
+| `npm run build-db`     | Build SQLite database            |
+| `npm run analytics`    | Generate comprehensive analytics |
+| `npm run all`          | Run complete pipeline            |
 
 ## 🙏 Ethical Considerations
 
 This project:
+
 - ✅ Respects robots.txt and website policies
 - ✅ Implements respectful scraping delays
 - ✅ Does not download actual media files
@@ -186,4 +194,4 @@ For questions about Buddhist content or technical issues, please open a GitHub i
 
 ---
 
-*May this project contribute to the preservation and accessibility of Buddhist teachings for the benefit of all beings.* 🙏
+_May this project contribute to the preservation and accessibility of Buddhist teachings for the benefit of all beings._ 🙏

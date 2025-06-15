@@ -17,7 +17,7 @@ class CsvGenerator {
     { id: "description", title: "Description" },
     { id: "dateRecorded", title: "Date Recorded" },
     { id: "sourcePage", title: "Source Page" },
-    { id: "scrapedDate", title: "Scraped Date" },
+    { id: "scrapedDate", title: "Scraped Date" }
   ];
 
   async generateCsv(
@@ -25,20 +25,20 @@ class CsvGenerator {
     outputFile = "data/dhamma_dataset.csv"
   ): Promise<void> {
     console.log("📊 Generating CSV dataset...");
-    
+
     // Ensure data directory exists
     await fs.ensureDir("data");
 
     // Add IDs to content items
     const contentWithIds = content.map((item, index) => ({
       ...item,
-      id: index + 1,
+      id: index + 1
     }));
 
     // Create CSV writer
     const csvWriter = createCsvWriter.createObjectCsvWriter({
       path: outputFile,
-      header: this.csvHeaders,
+      header: this.csvHeaders
     });
 
     // Write to CSV
@@ -56,17 +56,18 @@ class CsvGenerator {
       totalRecords: content.length,
       contentTypes: this.groupBy(content, "contentType"),
       languages: this.groupBy(content, "language"),
-      sourcePages: this.groupBy(content, "sourcePage"),
+      sourcePages: this.groupBy(content, "sourcePage")
     };
 
     // Add categories if they exist
     const categories = this.groupBy(content, "category");
-    if (Object.keys(categories).length > 1) { // More than just "unknown"
+    if (Object.keys(categories).length > 1) {
+      // More than just "unknown"
       summary.sourcePages = categories;
     }
 
     await fs.writeJson("data/csv_summary.json", summary, { spaces: 2 });
-    
+
     console.log("\n📊 CSV Summary:");
     console.log(`📚 Total Records: ${summary.totalRecords}`);
     console.log("📑 Content Types:", summary.contentTypes);
@@ -104,9 +105,9 @@ class CsvGenerator {
 
   async validateData(content: ContentItem[]): Promise<void> {
     console.log("🔍 Validating data...");
-    
+
     const issues: string[] = [];
-    
+
     content.forEach((item, index) => {
       if (!item.title?.trim()) {
         issues.push(`Item ${index}: Missing title`);
@@ -124,7 +125,7 @@ class CsvGenerator {
 
     if (issues.length > 0) {
       console.warn(`⚠️ Found ${issues.length} data quality issues:`);
-      issues.slice(0, 10).forEach(issue => console.warn(`  ${issue}`));
+      issues.slice(0, 10).forEach((issue) => console.warn(`  ${issue}`));
       if (issues.length > 10) {
         console.warn(`  ... and ${issues.length - 10} more`);
       }
@@ -139,14 +140,13 @@ async function main() {
   try {
     const generator = new CsvGenerator();
     const content = await generator.loadRawData();
-    
+
     await generator.validateData(content);
     await generator.generateCsv(content);
-    
+
     console.log("\n🎯 Next steps:");
     console.log("  npm run build-db      # Build SQLite database");
     console.log("  npm run analytics     # Generate analytics");
-    
   } catch (error) {
     console.error("💥 CSV generation failed:", error);
     process.exit(1);
