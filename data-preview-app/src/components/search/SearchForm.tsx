@@ -13,7 +13,7 @@ import {
   SelectValue
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Search, ExternalLink, Edit, Play } from "lucide-react";
+import { Search, ExternalLink, Edit } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -22,6 +22,7 @@ import {
   TableHeader,
   TableRow
 } from "@/components/ui/table";
+import { TablePlayer } from "../content/TablePlayer";
 import type { ContentItem, ContentFilters } from "@/lib/types";
 
 export function SearchForm() {
@@ -111,10 +112,6 @@ export function SearchForm() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handlePreview = (item: ContentItem) => {
-    window.open(item.fileUrl, "_blank");
   };
 
   const handleEdit = (id: number | undefined) => {
@@ -264,9 +261,8 @@ export function SearchForm() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Title</TableHead>
+                  <TableHead className="w-[300px]">Title & Player</TableHead>
                   <TableHead>Speaker</TableHead>
-                  <TableHead>Type</TableHead>
                   <TableHead>Category</TableHead>
                   <TableHead>Language</TableHead>
                   <TableHead>Actions</TableHead>
@@ -274,30 +270,29 @@ export function SearchForm() {
               </TableHeader>
               <TableBody>
                 {results.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell>
-                      <div className="max-w-md">
-                        <div className="font-medium truncate">{item.title}</div>
-                        <div className="text-sm text-muted-foreground">
-                          ID: {item.id}
+                  <TableRow key={item.id} className="align-top">
+                    <TableCell className="p-4">
+                      <div className="space-y-3">
+                        <div>
+                          <div className="font-medium truncate text-sm">
+                            {item.title}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            ID: {item.id}
+                          </div>
                         </div>
+                        <TablePlayer item={item} />
                       </div>
                     </TableCell>
-                    <TableCell>{item.speaker || "Unknown"}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{item.contentType}</Badge>
+                    <TableCell className="p-4">
+                      {item.speaker || "Unknown"}
                     </TableCell>
-                    <TableCell>{item.category || "Uncategorized"}</TableCell>
-                    <TableCell>{item.language}</TableCell>
-                    <TableCell>
+                    <TableCell className="p-4">
+                      {item.category || "Uncategorized"}
+                    </TableCell>
+                    <TableCell className="p-4">{item.language}</TableCell>
+                    <TableCell className="p-4">
                       <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handlePreview(item)}
-                        >
-                          <Play className="w-4 h-4" />
-                        </Button>
                         <Button
                           size="sm"
                           variant="outline"

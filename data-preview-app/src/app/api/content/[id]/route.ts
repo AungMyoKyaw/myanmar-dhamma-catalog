@@ -4,10 +4,11 @@ import { getDatabase } from "@/lib/database";
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const contentId = parseInt(params.id, 10);
+    const { id } = await params;
+    const contentId = parseInt(id, 10);
 
     if (Number.isNaN(contentId)) {
       return NextResponse.json(
@@ -49,10 +50,11 @@ export async function PUT(
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const contentId = parseInt(params.id, 10);
+    const { id } = await params;
+    const contentId = parseInt(id, 10);
 
     if (Number.isNaN(contentId)) {
       return NextResponse.json(

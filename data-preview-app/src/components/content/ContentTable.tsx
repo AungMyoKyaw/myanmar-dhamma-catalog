@@ -9,10 +9,11 @@ import {
   TableHeader,
   TableRow
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ExternalLink, Edit, Play } from "lucide-react";
+import { ExternalLink, Edit } from "lucide-react";
+import { TablePlayer } from "./TablePlayer";
+
 import type { ContentItem, PaginatedResult } from "@/lib/types";
 
 export function ContentTable() {
@@ -38,14 +39,8 @@ export function ContentTable() {
     fetchContentForPage(currentPage);
   }, [currentPage]);
 
-  const handlePreview = (item: ContentItem) => {
-    // For now, just open the URL in a new tab
-    window.open(item.fileUrl, "_blank");
-  };
-
   const handleEdit = (id: number | undefined) => {
     if (id) {
-      // Navigate to edit page
       window.location.href = `/edit/${id}`;
     }
   };
@@ -93,9 +88,8 @@ export function ContentTable() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Title</TableHead>
+              <TableHead className="w-[300px]">Title & Player</TableHead>
               <TableHead>Speaker</TableHead>
-              <TableHead>Type</TableHead>
               <TableHead>Category</TableHead>
               <TableHead>Language</TableHead>
               <TableHead>Actions</TableHead>
@@ -103,30 +97,29 @@ export function ContentTable() {
           </TableHeader>
           <TableBody>
             {data.items.map((item) => (
-              <TableRow key={item.id}>
-                <TableCell>
-                  <div className="max-w-md">
-                    <div className="font-medium truncate">{item.title}</div>
-                    <div className="text-sm text-muted-foreground">
-                      ID: {item.id}
+              <TableRow key={item.id} className="align-top">
+                <TableCell className="p-4">
+                  <div className="space-y-3">
+                    <div>
+                      <div className="font-medium truncate text-sm">
+                        {item.title}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        ID: {item.id}
+                      </div>
                     </div>
+                    <TablePlayer item={item} />
                   </div>
                 </TableCell>
-                <TableCell>{item.speaker || "Unknown"}</TableCell>
-                <TableCell>
-                  <Badge variant="outline">{item.contentType}</Badge>
+                <TableCell className="p-4">
+                  {item.speaker || "Unknown"}
                 </TableCell>
-                <TableCell>{item.category || "Uncategorized"}</TableCell>
-                <TableCell>{item.language}</TableCell>
-                <TableCell>
+                <TableCell className="p-4">
+                  {item.category || "Uncategorized"}
+                </TableCell>
+                <TableCell className="p-4">{item.language}</TableCell>
+                <TableCell className="p-4">
                   <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handlePreview(item)}
-                    >
-                      <Play className="w-4 h-4" />
-                    </Button>
                     <Button
                       size="sm"
                       variant="outline"

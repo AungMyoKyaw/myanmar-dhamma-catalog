@@ -494,6 +494,36 @@ export class DhammaDatabase {
     return result.map((r) => r.category);
   }
 
+  // Get speaker statistics
+  getSpeakerStats(): Array<{ speaker: string; count: number }> {
+    return this.db
+      .prepare(
+        `
+      SELECT speaker, COUNT(*) as count
+      FROM dhamma_content
+      WHERE speaker IS NOT NULL AND speaker != ''
+      GROUP BY speaker
+      ORDER BY speaker
+    `
+      )
+      .all() as Array<{ speaker: string; count: number }>;
+  }
+
+  // Get category statistics
+  getCategoryStats(): Array<{ category: string; count: number }> {
+    return this.db
+      .prepare(
+        `
+      SELECT category, COUNT(*) as count
+      FROM dhamma_content
+      WHERE category IS NOT NULL AND category != ''
+      GROUP BY category
+      ORDER BY count DESC
+    `
+      )
+      .all() as Array<{ category: string; count: number }>;
+  }
+
   // Get all speaker stats without limit
   getAllSpeakerStats(): Array<{ speaker: string; count: number }> {
     return this.db

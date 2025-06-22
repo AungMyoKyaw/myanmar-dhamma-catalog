@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { SearchForm } from "@/components/search/SearchForm";
 
 export default function SearchPage() {
@@ -10,7 +11,9 @@ export default function SearchPage() {
         </p>
       </div>
 
-      <SearchForm />
+      <Suspense fallback={<div>Loading search form...</div>}>
+        <SearchForm />
+      </Suspense>
     </div>
   );
 }

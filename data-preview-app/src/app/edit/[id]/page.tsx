@@ -4,9 +4,9 @@ import { getDatabase } from "@/lib/database";
 import type { ContentItem } from "@/lib/types";
 
 interface EditPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 async function getContentItem(id: string): Promise<ContentItem | null> {
