@@ -1,3 +1,7 @@
+"use client";
+
+import { useState, useEffect, useCallback } from "react";
+import type { FormEvent } from "react";
 import {
   Card,
   CardContent,
@@ -16,24 +20,41 @@ interface SpeakerStats {
   count: number;
 }
 
-// This would normally come from an API route
-async function getSpeakerStats(): Promise<SpeakerStats[]> {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/speakers`,
-    {
-      cache: "no-store"
+export default function SpeakersPage() {
+  const [speakerStats, setSpeakerStats] = useState<SpeakerStats[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // Fetch speakers from API, optional search filter
+  const fetchSpeakers = useCallback(async (query = "") => {
+    setLoading(true);
+    try {
+      const url = new URL("/api/speakers", window.location.origin);
+      if (query) url.searchParams.set("search", query);
+      const res = await fetch(url.toString(), { cache: "no-store" });
+      if (!res.ok) throw new Error("Failed to fetch speakers");
+      const data: SpeakerStats[] = await res.json();
+      setSpeakerStats(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
-  );
+  }, []);
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch speaker statistics");
-  }
+  useEffect(() => {
+    fetchSpeakers();
+  }, [fetchSpeakers]);
 
-  return response.json();
-}
+  const handleSearch = () => {
+    fetchSpeakers(searchQuery);
+  };
 
-export default async function SpeakersPage() {
-  const speakerStats = await getSpeakerStats();
+  // Trigger search on Enter key via form submission
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    handleSearch();
+  };
 
   return (
     <div className="space-y-6">
@@ -52,13 +73,20 @@ export default async function SpeakersPage() {
           <CardTitle>Search Speakers</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center space-x-2">
+          <form onSubmit={handleSubmit} className="flex items-center space-x-2">
             <div className="relative flex-1">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search speakers..." className="pl-8" />
+              <Input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.currentTarget.value)}
+                placeholder="Search speakers..."
+                className="pl-8"
+              />
             </div>
-            <Button>Search</Button>
-          </div>
+            <Button type="submit" disabled={loading}>
+              {loading ? "Searching..." : "Search"}
+            </Button>
+          </form>
         </CardContent>
       </Card>
 

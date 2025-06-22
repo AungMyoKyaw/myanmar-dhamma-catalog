@@ -308,6 +308,16 @@ export class DhammaDatabase {
       )
       .all() as Array<{ speaker: string; count: number }>;
 
+    // Calculate distinct speaker count
+    const speakerCountRow = this.db
+      .prepare(
+        `SELECT COUNT(DISTINCT speaker) as count
+         FROM dhamma_content
+         WHERE speaker IS NOT NULL AND speaker != ''`
+      )
+      .get() as { count: number };
+    const speakerCount = speakerCountRow.count;
+
     return {
       totalRecords,
       contentTypes: contentTypes.reduce(
@@ -331,7 +341,8 @@ export class DhammaDatabase {
         },
         {} as Record<string, number>
       ),
-      topSpeakers
+      topSpeakers,
+      speakerCount
     };
   }
 
@@ -408,6 +419,45 @@ export class DhammaDatabase {
         });
       });
     });
+    // Invalid URLs (not starting with http or https)
+    const invalidUrls = this.db
+      .prepare(
+        `
+      SELECT id, file_url FROM dhamma_content
+      WHERE file_url NOT LIKE 'http://%' AND file_url NOT LIKE 'https://%'
+    `
+      )
+      .all() as Array<{ id: number; file_url: string }>;
+    invalidUrls.forEach((item) => {
+      issues.push({
+        id: issues.length + 1,
+        type: "invalid_url",
+        severity: "high",
+        description: `Content ID ${item.id} has invalid URL: ${item.file_url}`,
+        suggestedFix: "Ensure file URLs start with http:// or https://",
+        contentId: item.id
+      });
+    });
+
+    // Suspicious content descriptions (too long)
+    const suspiciousContents = this.db
+      .prepare(
+        `
+      SELECT id, LENGTH(description) AS len FROM dhamma_content
+      WHERE description IS NOT NULL AND LENGTH(description) > 1000
+    `
+      )
+      .all() as Array<{ id: number; len: number }>;
+    suspiciousContents.forEach((item) => {
+      issues.push({
+        id: issues.length + 1,
+        type: "suspicious_content",
+        severity: "low",
+        description: `Content ID ${item.id} has very long description (${item.len} chars)`,
+        suggestedFix: "Review content description length",
+        contentId: item.id
+      });
+    });
 
     return issues;
   }
@@ -442,6 +492,21 @@ export class DhammaDatabase {
       .all() as Array<{ category: string }>;
 
     return result.map((r) => r.category);
+  }
+
+  // Get all speaker stats without limit
+  getAllSpeakerStats(): Array<{ speaker: string; count: number }> {
+    return this.db
+      .prepare(
+        `
+      SELECT speaker, COUNT(*) as count
+      FROM dhamma_content
+      WHERE speaker IS NOT NULL AND speaker != ''
+      GROUP BY speaker
+      ORDER BY speaker
+    `
+      )
+      .all() as Array<{ speaker: string; count: number }>;
   }
 
   close() {

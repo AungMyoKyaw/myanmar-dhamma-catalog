@@ -21,6 +21,7 @@ export interface DatabaseStats {
   languages: Record<string, number>;
   sourcePages: Record<string, number>;
   topSpeakers?: Array<{ speaker: string; count: number }>;
+  speakerCount: number;
 }
 
 export interface ContentFilters {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,7 @@ import {
 import type { ContentItem, ContentFilters } from "@/lib/types";
 
 export function SearchForm() {
+  const searchParams = useSearchParams();
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState<ContentFilters>({});
   const [results, setResults] = useState<ContentItem[]>([]);
@@ -46,14 +48,54 @@ export function SearchForm() {
     });
   }, []);
 
+  // On first render, if URL has search params, populate form and fetch
+  useEffect(() => {
+    const q = searchParams.get("q") || "";
+    const ct = searchParams.get("contentType") || "";
+    const sp = searchParams.get("speaker") || "";
+    const cat = searchParams.get("category") || "";
+    const lang = searchParams.get("language") || "";
+    const initialFilters: ContentFilters = {};
+    if (ct) initialFilters.contentType = ct;
+    if (sp) initialFilters.speaker = sp;
+    if (cat) initialFilters.category = cat;
+    if (lang) initialFilters.language = lang;
+    if (q || ct || sp || cat || lang) {
+      setQuery(q);
+      setFilters(initialFilters);
+      const run = async () => {
+        setLoading(true);
+        try {
+          const params = new URLSearchParams();
+          if (q) params.append("q", q);
+          if (ct) params.append("contentType", ct);
+          if (sp) params.append("speaker", sp);
+          if (cat) params.append("category", cat);
+          if (lang) params.append("language", lang);
+          const res = await fetch(`/api/search?${params}`);
+          const data = await res.json();
+          setResults(data);
+        } catch (e) {
+          console.error("Error initial search:", e);
+        } finally {
+          setLoading(false);
+        }
+      };
+      run();
+    }
+  }, [searchParams]);
+
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!query.trim()) return;
+    // Allow search even if query is empty when filters are provided
+    // if no query and no filters, form submission can still proceed (server handles empty result)
 
     setLoading(true);
     try {
       const searchParams = new URLSearchParams();
-      searchParams.append("q", query);
+      if (query.trim()) {
+        searchParams.append("q", query);
+      }
 
       if (filters.contentType)
         searchParams.append("contentType", filters.contentType);

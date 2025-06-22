@@ -25,7 +25,7 @@ class SqliteBuilder {
         title TEXT NOT NULL,
         speaker TEXT,
         content_type TEXT CHECK(content_type IN ('audio', 'video', 'ebook', 'other')),
-        file_url TEXT NOT NULL,
+        file_url TEXT NOT NULL UNIQUE,
         file_size_estimate INTEGER,
         duration_estimate INTEGER,
         language TEXT DEFAULT 'Myanmar',
@@ -215,8 +215,8 @@ class SqliteBuilder {
   // Utility queries for data exploration
   searchByTitle(searchTerm: string): Array<ContentItem> {
     const stmt = this.db.prepare(`
-      SELECT * FROM dhamma_content 
-      WHERE title LIKE ? 
+      SELECT * FROM dhamma_content
+      WHERE title LIKE ?
       ORDER BY title
       LIMIT 20
     `);
@@ -225,8 +225,8 @@ class SqliteBuilder {
 
   getByContentType(contentType: string): Array<ContentItem> {
     const stmt = this.db.prepare(`
-      SELECT * FROM dhamma_content 
-      WHERE content_type = ? 
+      SELECT * FROM dhamma_content
+      WHERE content_type = ?
       ORDER BY title
     `);
     return stmt.all(contentType) as Array<ContentItem>;
@@ -234,8 +234,8 @@ class SqliteBuilder {
 
   getBySpeaker(speaker: string): Array<ContentItem> {
     const stmt = this.db.prepare(`
-      SELECT * FROM dhamma_content 
-      WHERE speaker = ? 
+      SELECT * FROM dhamma_content
+      WHERE speaker = ?
       ORDER BY title
     `);
     return stmt.all(speaker) as Array<ContentItem>;

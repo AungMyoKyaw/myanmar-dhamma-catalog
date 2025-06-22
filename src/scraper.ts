@@ -2,6 +2,7 @@ import axios from "axios";
 import * as cheerio from "cheerio";
 import type { ContentItem, ScrapingConfig } from "./types";
 import fs from "fs-extra";
+import { SqliteBuilder } from "./sqliteBuilder";
 
 class DhammaScraper {
   private config: ScrapingConfig = {
@@ -98,8 +99,7 @@ class DhammaScraper {
       const title = $(element).text().trim();
 
       if (
-        href &&
-        href.endsWith(".htm") &&
+        href?.endsWith(".htm") &&
         !href.includes("mailto") &&
         title &&
         title.length > 2
@@ -140,6 +140,9 @@ class DhammaScraper {
     const $ = cheerio.load(response.data);
     const pageContent: ContentItem[] = [];
 
+    // Extract speaker from page content (improved method)
+    const extractedSpeaker = this.extractSpeakerFromPageContent($, subpage);
+
     // Extract media files from the subpage
     $("a[href]").each((_, element) => {
       const href = $(element).attr("href");
@@ -148,13 +151,12 @@ class DhammaScraper {
       if (href && this.isMediaFile(href) && linkText && linkText.length > 2) {
         // Try to extract additional context from surrounding elements
         const parent = $(element).parent();
-        const speaker = this.extractSpeakerFromTitle(subpage.title);
         const description = parent.text().trim();
         const category = this.extractCategoryFromUrl(mainPageUrl);
 
         const contentItem: ContentItem = {
           title: this.cleanTitle(linkText),
-          speaker: speaker || undefined,
+          speaker: extractedSpeaker || undefined,
           contentType: this.getContentType(href),
           fileUrl: this.normalizeUrl(href, subpage.url),
           language: "Myanmar",
@@ -171,6 +173,72 @@ class DhammaScraper {
     return pageContent;
   }
 
+  private extractSpeakerFromPageContent(
+    $: cheerio.Root,
+    subpage: { url: string; title: string }
+  ): string | null {
+    // Use subpage.title if it contains Burmese script (speaker name)
+    if (/[\u1000-\u109F]/.test(subpage.title)) {
+      return this.cleanSpeakerName(subpage.title);
+    }
+    if (/[\u1000-\u109F]/.test(subpage.title)) {
+      // Remove Burmese numbering prefixes (e.g., “၁၄၁။ ”) and trailing parenthetical parts
+      const cleanedTitle = subpage.title
+        .replace(/^[\d\s]+[။\.]*/, "")
+        .replace(/\s*\(.+\)$/, "")
+        .trim();
+      return this.cleanSpeakerName(cleanedTitle);
+    }
+    // Strategy 1: Look for speaker name in page title or headings
+    const pageTitle = $("title").text().trim();
+    const headings = $("h1, h2, h3")
+      .map((_, el) => $(el).text().trim())
+      .get();
+
+    // Strategy 2: Look for prominent text that might contain speaker name
+    const prominentTexts = [
+      pageTitle,
+      ...headings,
+      $("body").first().text().split("\n")[0]?.trim() || "" // First line of body
+    ].filter((text) => text && text.length > 0);
+
+    // Try to extract speaker from each text source
+    for (const text of prominentTexts) {
+      const speaker = this.extractSpeakerFromText(text);
+      if (speaker && this.isValidSpeakerName(speaker)) {
+        console.log(`    🎯 Extracted speaker "${speaker}" from page content`);
+        return speaker;
+      }
+    }
+
+    // Strategy 3: Fall back to extracting from subpage title
+    const titleSpeaker = this.extractSpeakerFromTitle(subpage.title);
+    if (titleSpeaker && this.isValidSpeakerName(titleSpeaker)) {
+      console.log(`    📝 Extracted speaker "${titleSpeaker}" from page title`);
+      return titleSpeaker;
+    }
+
+    // Strategy 4: Try to extract from URL patterns
+    const urlSpeaker = this.extractSpeakerFromUrl(subpage.url);
+    if (urlSpeaker && this.isValidSpeakerName(urlSpeaker)) {
+      console.log(`    🔗 Extracted speaker "${urlSpeaker}" from URL`);
+      return urlSpeaker;
+    }
+
+    console.log(`    ⚠️ Could not extract speaker for page: ${subpage.title}`);
+    // Fallback: use cleaned subpage.title as speaker
+    console.log(
+      `    🔄 Falling back to subpage title for speaker: ${subpage.title}`
+    );
+    const fallbackName = this.cleanSpeakerName(
+      subpage.title
+        .replace(/^[\d\s]+[။\.]*/, "")
+        .replace(/\s*\(.+\)$/, "")
+        .trim()
+    );
+    return fallbackName;
+  }
+
   private extractSpeakerFromTitle(title: string): string | null {
     // Extract speaker name from subpage title (e.g., "MogokSayadaw-mp3" -> "Mogok Sayadaw")
     const cleaned = title
@@ -183,6 +251,116 @@ class DhammaScraper {
     }
 
     return null;
+  }
+
+  private extractSpeakerFromText(text: string): string | null {
+    const cleanedText = text.replace(/\s+/g, " ").trim();
+
+    // Pattern 1: Look for Myanmar Buddhist titles
+    const titlePatterns = [
+      /(?:Venerable|Ven\.?|Sayadaw|Ashin|U)\s+([^,\n\r\-\(\)]{3,50})/i,
+      /Dr\.?\s+([^,\n\r\-\(\)]{3,50})/i,
+      /Professor\s+([^,\n\r\-\(\)]{3,50})/i
+    ];
+
+    for (const pattern of titlePatterns) {
+      const match = cleanedText.match(pattern);
+      if (match?.[1]) {
+        return this.cleanSpeakerName(
+          `${match[0].split(" ")[0]} ${match[1].trim()}`
+        );
+      }
+    }
+
+    // Pattern 2: Look for speaker indicators
+    const speakerPatterns = [
+      /by\s+([^,\n\r\-\(\)]{3,50})/i,
+      /speaker:\s*([^,\n\r\-\(\)]{3,50})/i,
+      /teacher:\s*([^,\n\r\-\(\)]{3,50})/i,
+      /taught\s+by\s+([^,\n\r\-\(\)]{3,50})/i
+    ];
+
+    for (const pattern of speakerPatterns) {
+      const match = cleanedText.match(pattern);
+      if (match?.[1]) {
+        return this.cleanSpeakerName(match[1].trim());
+      }
+    }
+
+    // Pattern 3: Extended Burmese honorifics and names
+    const burmesePatterns = [
+      /(?:ပါမောက္ခချုပ်ဆရာတော်ကြီး)\s*([\p{Script=Myanmar}\s]{1,100})/u,
+      /(?:ဘဒ္ဒန္တ)\s*([\p{Script=Myanmar}\s]{1,100})/u,
+      /(?:ဒေါက်တာ)\s*([\p{Script=Myanmar}\s]{1,100})/u,
+      /(?:ဆရာတော်)\s*([\p{Script=Myanmar}\s]{1,50})/u,
+      /(?:ဦး)\s*([\p{Script=Myanmar}\s]{1,50})/u
+    ];
+    for (const pattern of burmesePatterns) {
+      const match = cleanedText.match(pattern);
+      if (match?.[1]) {
+        return this.cleanSpeakerName(match[0].trim());
+      }
+    }
+
+    // Fallback: if any Burmese script character present, accept as speaker name
+    if (/\p{Script=Myanmar}/u.test(cleanedText)) {
+      return this.cleanSpeakerName(cleanedText);
+    }
+    // Pattern 4: If the text looks like a speaker name (reasonable length, no dates/numbers)
+    if (
+      cleanedText.length >= 3 &&
+      cleanedText.length <= 100 &&
+      !cleanedText.match(/\d{4}|\d{2}\/\d{2}/) && // No dates
+      !cleanedText.match(/^(mp3|video|audio|download)/i)
+    ) {
+      // Not file type indicators
+      return this.cleanSpeakerName(cleanedText);
+    }
+
+    return null;
+  }
+
+  private extractSpeakerFromUrl(url: string): string | null {
+    // Extract speaker name from URL patterns like "/Dr-Nandamalabhivamsa.htm"
+    const urlMatch = url.match(/\/([^\/]+)\.htm?$/);
+    if (urlMatch?.[1]) {
+      const urlPart = urlMatch[1];
+      // Convert URL-encoded names to readable format
+      const readable = urlPart
+        .replace(/-/g, " ")
+        .replace(/([a-z])([A-Z])/g, "$1 $2") // Add space before capitals
+        .trim();
+
+      if (readable.length >= 3 && readable.length <= 100) {
+        return this.cleanSpeakerName(readable);
+      }
+    }
+    return null;
+  }
+
+  private cleanSpeakerName(name: string): string {
+    return (
+      name
+        .replace(/\s+/g, " ") // Normalize whitespace
+        // Keep all unicode letters, combining marks, spaces, dots and hyphens
+        .replace(/[^\p{L}\p{M}\s.\-]/gu, "")
+        .trim()
+        .substring(0, 100)
+    ); // Limit length
+  }
+
+  private isValidSpeakerName(name: string): boolean {
+    if (!name || name.length < 3 || name.length > 100) return false;
+
+    // Reject if it's clearly not a speaker name
+    const invalidPatterns = [
+      /^\d+$/, // Only numbers
+      /^(mp3|video|audio|download|file|htm|html)$/i, // File type indicators
+      /^\d{4}(-\d{2}){0,2}$/, // Dates like 2024, 2024-01, 2024-01-01
+      /^(page|content|media|link|website)$/i // Generic web terms
+    ];
+
+    return !invalidPatterns.some((pattern) => pattern.test(name.trim()));
   }
 
   private isMediaFile(url: string): boolean {
@@ -201,7 +379,7 @@ class DhammaScraper {
       if (href.startsWith("http")) return href;
       const baseUrl = new URL(basePage).origin;
       return new URL(href, baseUrl).toString();
-    } catch (error) {
+    } catch {
       console.warn(`⚠️ Could not normalize URL: ${href}`);
       return href;
     }
@@ -226,7 +404,7 @@ class DhammaScraper {
 
   private extractSpeaker(
     parentElement: cheerio.Cheerio,
-    $: cheerio.CheerioAPI
+    _$: cheerio.CheerioAPI
   ): string | null {
     // Try to find speaker information in surrounding text
     const text = parentElement.text();
@@ -248,7 +426,7 @@ class DhammaScraper {
 
   private extractDescription(
     parentElement: cheerio.Cheerio,
-    $: cheerio.CheerioAPI
+    _$: cheerio.CheerioAPI
   ): string | null {
     // Try to extract description from nearby text
     const siblings = parentElement.siblings();
@@ -280,6 +458,7 @@ class DhammaScraper {
         totalItems: content.length,
         contentTypes: this.groupBy(content, "contentType"),
         categories: this.groupBy(content, "category"),
+        speakers: this.groupBy(content, "speaker"),
         sourcePages: this.groupBy(content, "sourcePage"),
         config: this.config
       };
@@ -320,11 +499,17 @@ async function main() {
     const content = await scraper.scrapeContent();
     await scraper.saveRawData(content);
 
+    // Update SQLite database with scraped content
+    console.log("📥 Updating SQLite database with new content...");
+    const builder = new SqliteBuilder();
+    await builder.insertFromJson();
+    await builder.saveStatistics();
+    builder.close();
+
     console.log("\n🎯 Next steps:");
     console.log("  npm run generate-csv  # Generate CSV dataset");
-    console.log("  npm run build-db      # Build SQLite database");
-    console.log("  npm run analytics     # Generate analytics");
-    console.log("  npm run all           # Run all steps");
+    console.log("  npm run analytics     # Generate detailed analytics");
+    console.log("  npm run all           # Run complete pipeline");
   } catch (error) {
     console.error("💥 Scraping failed:", error);
     process.exit(1);

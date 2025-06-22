@@ -49,7 +49,7 @@ export function StatsCards() {
   }
 
   const audioCount = stats.contentTypes.audio || 0;
-  const speakerCount = stats.topSpeakers?.length || 0;
+  const speakerCount = stats.speakerCount || 0;
   const languageCount = Object.keys(stats.languages).length;
 
   return (
