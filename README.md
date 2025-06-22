@@ -20,6 +20,7 @@ The goal is to preserve and catalog Myanmar Buddhist educational content in acce
 - **Rich Metadata**: Extracts titles, speakers, content types, categories, and descriptions
 - **Comprehensive Analytics**: Provides detailed analysis and quality metrics
 - **Data Validation**: Ensures data quality and identifies duplicates
+- **Interactive Web App**: Modern Next.js application for data exploration and management
 - **TypeScript**: Fully typed codebase for reliability
 
 ## 🚀 Quick Start
@@ -40,9 +41,9 @@ cd myanmar-dhamma-catalog
 npm install
 ```
 
-### Usage
+### Data Pipeline Usage
 
-Run the complete pipeline:
+Run the complete data pipeline:
 
 ```bash
 npm run all
@@ -64,6 +65,23 @@ npm run build-db
 npm run analytics
 ```
 
+### Web Application Usage
+
+Launch the interactive web interface:
+
+```bash
+# Navigate to the web app
+cd data-preview-app
+
+# Install app dependencies
+npm install
+
+# Start the development server
+npm run dev
+```
+
+Then visit [http://localhost:3000](http://localhost:3000) to explore the data interactively.
+
 ## 📁 Project Structure
 
 ```
@@ -79,6 +97,10 @@ myanmar-dhamma-catalog/
 │   ├── dhamma_dataset.csv # Main CSV dataset
 │   ├── dhamma_dataset.db  # SQLite database
 │   └── analytics_report.md # Analytics report
+├── data-preview-app/      # Next.js web application
+│   ├── src/               # Application source code
+│   ├── public/            # Static assets
+│   └── package.json       # App dependencies
 ├── docs/
 │   └── project-plan.md    # Detailed project plan
 └── package.json
@@ -118,6 +140,52 @@ Comprehensive analysis including:
 - Data quality metrics
 - URL pattern analysis
 
+## 🌐 Data Preview Web App
+
+The project includes a modern Next.js web application for interactive data exploration and management:
+
+### ✨ Key Features
+
+- **📊 Interactive Dashboard**: Real-time database statistics, recent items, and quality metrics
+- **🔍 Advanced Search**: Filter content by speaker, category, content type, and keywords
+- **📋 Browse & Manage**: Paginated table view with sorting and filtering capabilities
+- **✏️ Content Editing**: Update metadata, titles, speakers, and descriptions
+- **📈 Analytics Views**: Speaker directories, category distributions, and quality reports
+- **🔧 Data Validation**: Automated quality checks for missing or invalid data
+
+### 🚀 Quick Start (Web App)
+
+```bash
+# Navigate to the app directory
+cd data-preview-app
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+```
+
+Visit [http://localhost:3000](http://localhost:3000) to access the web interface.
+
+### 📱 App Pages
+
+- **Dashboard** (`/`) - Overview with statistics and recent items
+- **Browse** (`/browse`) - Table view of all content with filters
+- **Search** (`/search`) - Advanced search interface
+- **Speakers** (`/speakers`) - Speaker directory with content counts
+- **Categories** (`/categories`) - Category browser and statistics
+- **Quality** (`/quality`) - Data quality reports and issue tracking
+- **Edit** (`/edit/[id]`) - Individual content metadata editing
+
+### 🛠️ Technology Stack
+
+- **Framework**: Next.js 14 with App Router and TypeScript
+- **Styling**: Tailwind CSS with shadcn/ui components
+- **Database**: SQLite with better-sqlite3 for fast queries
+- **Forms**: React Hook Form with Zod validation
+- **Icons**: Lucide React for modern iconography
+
 ## 🔍 Data Sources
 
 Currently scrapes from:
@@ -153,6 +221,8 @@ Currently scrapes from:
 
 ## 📝 Scripts Reference
 
+### Core Data Pipeline
+
 | Script                 | Description                      |
 | ---------------------- | -------------------------------- |
 | `npm run scrape`       | Scrape content from websites     |
@@ -160,6 +230,15 @@ Currently scrapes from:
 | `npm run build-db`     | Build SQLite database            |
 | `npm run analytics`    | Generate comprehensive analytics |
 | `npm run all`          | Run complete pipeline            |
+
+### Web App (data-preview-app/)
+
+| Script          | Description                    |
+| --------------- | ------------------------------ |
+| `npm run dev`   | Start development server       |
+| `npm run build` | Build production application   |
+| `npm run start` | Start production server        |
+| `npm run lint`  | Run ESLint code quality checks |
 
 ## 🙏 Ethical Considerations
 
