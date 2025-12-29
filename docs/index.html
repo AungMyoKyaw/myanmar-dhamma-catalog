@@ -13,6 +13,32 @@
       href="https://aungmyokyaw.github.io/myanmar-dhamma-catalog/"
     />
 
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://aungmyokyaw.github.io/myanmar-dhamma-catalog/" />
+    <meta property="og:title" content="Myanmar Dhamma Catalog | ဓမ္မဒေါင်းလုပ်" />
+    <meta property="og:description" content="29,000+ Theravada Buddhist dhamma talks, videos, and ebooks. Free SQLite database with MP3 audio, MP4 videos, and PDF books from renowned teachers." />
+    <meta property="og:image" content="https://aungmyokyaw.github.io/myanmar-dhamma-catalog/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="my_MM" />
+    <meta property="og:site_name" content="Myanmar Dhamma Catalog" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://aungmyokyaw.github.io/myanmar-dhamma-catalog/" />
+    <meta name="twitter:title" content="Myanmar Dhamma Catalog | ဓမ္မဒေါင်းလုပ်" />
+    <meta name="twitter:description" content="29,000+ Theravada Buddhist dhamma talks, videos, and ebooks. Free SQLite database with MP3 audio, MP4 videos, and PDF books." />
+    <meta name="twitter:image" content="https://aungmyokyaw.github.io/myanmar-dhamma-catalog/og-image.jpg" />
+
+    <!-- Additional SEO -->
+    <meta name="keywords" content="dhamma, dharma, buddhism, theravada, myanmar, burma, meditation, vipassana, abhidhamma, sqlite, database, audio, video, ebook, mogok, pa auk" />
+    <meta name="author" content="Aung Myo Kyaw" />
+    <meta name="robots" content="index, follow" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236B1D1D' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Ccircle cx='12' cy='12' r='4'/%3E%3Cpath d='M12 2v4M12 18v4M2 12h4M18 12h4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83'/%3E%3C/svg%3E" />
+
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -211,7 +237,7 @@
       }
 
       .hero-badge::before {
-        content: '☸';
+        content: '';
         font-size: 1rem;
       }
 
@@ -392,8 +418,8 @@
 
       .features-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: var(--space-md);
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-lg);
         max-width: 1200px;
         margin: 0 auto;
       }
@@ -795,14 +821,49 @@
       }
 
       /* Mobile Responsive */
+      /* Enhanced Mobile Responsive - Apple Devices */
       @media (max-width: 768px) {
         .nav-links {
           display: none;
         }
 
+        .hero {
+          padding: var(--space-xl) var(--space-md);
+        }
+
+        .hero h1 {
+          font-size: 2.2rem;
+          line-height: 1.2;
+        }
+
+        .hero p {
+          font-size: 0.95rem;
+        }
+
+        .hero-myanmar {
+          font-size: 1rem;
+        }
+
         .hero-stats {
-          flex-direction: column;
-          gap: var(--space-md);
+          flex-direction: row;
+          flex-wrap: wrap;
+          gap: var(--space-sm);
+          justify-content: center;
+          width: 100%;
+          padding: 0 var(--space-xs);
+        }
+
+        .hero-stat {
+          min-width: 90px;
+          flex: 1;
+        }
+
+        .hero-stat .number {
+          font-size: 1.75rem;
+        }
+
+        .hero-stat .label {
+          font-size: 0.65rem;
         }
 
         .hero-actions {
@@ -815,12 +876,183 @@
           justify-content: center;
         }
 
+        .features-grid {
+          grid-template-columns: 1fr !important;
+          gap: var(--space-md);
+        }
+
+        .feature-card {
+          padding: var(--space-md);
+        }
+
         .demo-controls {
           flex-direction: column;
+          gap: var(--space-sm);
         }
 
         .search-box {
           width: 100%;
+        }
+
+        .filter-select {
+          width: 100%;
+        }
+
+        .demo-stats {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: var(--space-xs);
+        }
+
+        .demo-stat {
+          padding: var(--space-sm);
+        }
+
+        .demo-stat:last-child {
+          grid-column: span 2;
+          max-width: 50%;
+          justify-self: center;
+        }
+
+        .demo-stat .number {
+          font-size: 1.5rem;
+        }
+
+        .demo-stat .label {
+          font-size: 0.65rem;
+        }
+
+        .result-item {
+          padding: var(--space-sm);
+          gap: var(--space-xs);
+        }
+
+        .result-title {
+          font-size: 0.95rem;
+          line-height: 1.4;
+        }
+
+        .result-link {
+          font-size: 0.75rem;
+          word-break: break-all;
+          line-height: 1.3;
+        }
+
+        .result-meta {
+          font-size: 0.85rem;
+        }
+
+        .result-type {
+          font-size: 0.6rem;
+          padding: 2px 6px;
+        }
+
+        .download-meta {
+          flex-direction: column;
+          gap: var(--space-xs);
+          align-items: center;
+        }
+
+        .meta-item {
+          justify-content: center;
+        }
+
+        .download-card {
+          margin: 0 var(--space-sm);
+        }
+
+        .git-clone {
+          font-size: 0.65rem;
+          word-break: break-all;
+        }
+
+        .section-title {
+          font-size: 2rem;
+        }
+
+        .footer-links {
+          flex-direction: column;
+          gap: var(--space-sm);
+        }
+      }
+
+      /* iPhone SE, iPhone 8 (375px) */
+      @media (max-width: 390px) {
+        .hero h1 {
+          font-size: 1.85rem;
+        }
+
+        .hero-badge {
+          font-size: 0.65rem;
+          padding: 4px 10px;
+        }
+
+        .hero-stats {
+          gap: 4px;
+        }
+
+        .hero-stat {
+          min-width: 70px;
+        }
+
+        .hero-stat .number {
+          font-size: 1.4rem;
+        }
+
+        .hero-stat .label {
+          font-size: 0.55rem;
+        }
+
+        .section-title {
+          font-size: 1.75rem;
+        }
+
+        .feature-card h3 {
+          font-size: 1.1rem;
+        }
+
+        .feature-card p {
+          font-size: 0.85rem;
+        }
+
+        .feature-icon {
+          width: 44px;
+          height: 44px;
+        }
+
+        .feature-icon i {
+          width: 22px;
+          height: 22px;
+        }
+
+        .download-card {
+          padding: var(--space-md);
+        }
+
+        .download-card h3 {
+          font-size: 1.25rem;
+        }
+      }
+
+      /* iPad Mini, iPad (768px - 1024px) */
+      @media (min-width: 769px) and (max-width: 1024px) {
+        .features-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .demo-stats {
+          grid-template-columns: repeat(5, 1fr);
+        }
+
+        .hero h1 {
+          font-size: 3.5rem;
+        }
+      }
+
+      /* iPad Pro 12.9 and larger (1024px+) */
+      @media (min-width: 1025px) {
+        .container {
+          max-width: 1200px;
         }
       }
 
@@ -840,7 +1072,7 @@
     <!-- Navigation -->
     <nav>
       <div class="nav-content">
-        <a href="#" class="nav-logo">☸ Dhamma<span>Catalog</span></a>
+        <a href="#" class="nav-logo"><i data-lucide="flower-2"></i> Dhamma<span>Catalog</span></a>
         <ul class="nav-links">
           <li><a href="#features">Features</a></li>
           <li><a href="#download">Download</a></li>
@@ -915,10 +1147,10 @@
 
       <div class="hero-actions">
         <a href="#download" class="btn btn-primary">
-          <span>⬇</span> Download Database
+          <i data-lucide="download"></i> Download Database
         </a>
         <a href="#demo" class="btn btn-secondary">
-          <span>◎</span> Try Live Demo
+          <i data-lucide="play-circle"></i> Try Live Demo
         </a>
       </div>
     </section>
@@ -935,7 +1167,7 @@
 
       <div class="features-grid">
         <div class="feature-card fade-in">
-          <div class="feature-icon">🎧</div>
+          <div class="feature-icon"><i data-lucide="headphones"></i></div>
           <h3>21,400+ Audio</h3>
           <p>
             MP3 dhamma talks from renowned teachers including Mogok Sayadaw, Pa
@@ -944,7 +1176,7 @@
         </div>
 
         <div class="feature-card fade-in">
-          <div class="feature-icon">🎬</div>
+          <div class="feature-icon"><i data-lucide="clapperboard"></i></div>
           <h3>6,300+ Videos</h3>
           <p>
             MP4 video teachings, meditation instructions, and recorded dhamma
@@ -953,7 +1185,7 @@
         </div>
 
         <div class="feature-card fade-in">
-          <div class="feature-icon">📚</div>
+          <div class="feature-icon"><i data-lucide="book-open"></i></div>
           <h3>1,100+ eBooks</h3>
           <p>
             PDF books on Abhidhamma, Vipassana, Pali texts, and Buddhist
@@ -962,7 +1194,7 @@
         </div>
 
         <div class="feature-card fade-in">
-          <div class="feature-icon">🌏</div>
+          <div class="feature-icon"><i data-lucide="globe"></i></div>
           <h3>Bilingual</h3>
           <p>
             Content in both Myanmar and English, serving a global Buddhist
@@ -971,7 +1203,7 @@
         </div>
 
         <div class="feature-card fade-in">
-          <div class="feature-icon">🔍</div>
+          <div class="feature-icon"><i data-lucide="search"></i></div>
           <h3>Searchable</h3>
           <p>
             Full SQLite database with indexes for fast queries by title,
@@ -980,7 +1212,7 @@
         </div>
 
         <div class="feature-card fade-in">
-          <div class="feature-icon">🆓</div>
+          <div class="feature-icon"><i data-lucide="heart-handshake"></i></div>
           <h3>Open & Free</h3>
           <p>
             MIT licensed. Use it to build apps, research tools, or personal
@@ -1003,9 +1235,9 @@
         <p>Complete SQLite database with all indexed media</p>
 
         <div class="download-meta">
-          <span class="meta-item">📦 <strong>~16 MB</strong></span>
-          <span class="meta-item">📄 <strong>SQLite 3</strong></span>
-          <span class="meta-item">🔄 <strong>Updated Dec 2024</strong></span>
+          <span class="meta-item"><i data-lucide="package"></i> <strong>~16 MB</strong></span>
+          <span class="meta-item"><i data-lucide="database"></i> <strong>SQLite 3</strong></span>
+          <span class="meta-item"><i data-lucide="refresh-cw"></i> <strong>Updated Dec 2024</strong></span>
         </div>
 
         <a
@@ -1013,7 +1245,7 @@
           class="btn btn-primary"
           id="downloadBtn"
         >
-          <span>⬇</span> Download dhamma.db
+          <i data-lucide="download"></i> Download dhamma.db
         </a>
 
         <p
