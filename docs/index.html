@@ -4,8 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Myanmar Dhamma Catalog | ဓမ္မဒေါင်းလုပ်</title>
-  <meta name="description" content="A comprehensive SQLite database of 29,000+ Theravada Buddhist dhamma talks, videos, and ebooks from dhammadownload.com">
-  
+  <meta name="description" content="29,000+ Theravada Buddhist dhamma talks, videos, and ebooks from renowned teachers. Searchable SQLite database with MP3 audio, MP4 videos, and PDF books in English and Myanmar.">
+  <link rel="canonical" href="https://aungmyokyaw.github.io/myanmar-dhamma-catalog/">
+
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -114,6 +115,13 @@
       gap: var(--space-xs);
     }
 
+    
+    .nav-logo i {
+      width: 24px;
+      height: 24px;
+      color: var(--color-saffron-dark);
+    }
+
     .nav-logo span {
       color: var(--color-saffron-dark);
     }
@@ -187,6 +195,12 @@
       color: var(--color-maroon-deep);
       line-height: 1.1;
       margin-bottom: var(--space-sm);
+    }
+
+    .feature-icon i {
+      width: 28px;
+      height: 28px;
+      color: var(--color-maroon);
       animation: fadeInUp 0.8s ease-out 0.1s both;
     }
 
@@ -272,6 +286,11 @@
       border: none;
     }
 
+    .btn i {
+      width: 18px;
+      height: 18px;
+    }
+
     .btn-primary {
       background: linear-gradient(135deg, var(--color-maroon), var(--color-maroon-deep));
       color: var(--color-cream);
@@ -318,6 +337,12 @@
       margin-bottom: var(--space-sm);
     }
 
+    .feature-icon i {
+      width: 28px;
+      height: 28px;
+      color: var(--color-maroon);
+    }
+
     .section-header p {
       color: var(--color-ink-light);
       font-size: 1.1rem;
@@ -362,6 +387,12 @@
       margin-bottom: var(--space-sm);
     }
 
+    .feature-icon i {
+      width: 28px;
+      height: 28px;
+      color: var(--color-maroon);
+    }
+
     .feature-card h3 {
       font-family: var(--font-display);
       font-size: 1.5rem;
@@ -403,6 +434,12 @@
       box-shadow: 0 8px 32px rgba(232, 168, 56, 0.3);
     }
 
+    .download-icon i {
+      width: 48px;
+      height: 48px;
+      color: var(--color-maroon-deep);
+    }
+
     .download-card h3 {
       font-family: var(--font-display);
       font-size: 2rem;
@@ -424,6 +461,11 @@
       gap: var(--space-xs);
       color: var(--color-ink-light);
       font-size: 0.9rem;
+    }
+
+    .meta-item i {
+      width: 16px;
+      height: 16px;
     }
 
     .meta-item strong {
@@ -541,6 +583,12 @@
       border-radius: 50%;
       animation: spin 1s linear infinite;
       margin-bottom: var(--space-sm);
+    }
+
+    .feature-icon i {
+      width: 28px;
+      height: 28px;
+      color: var(--color-maroon);
     }
 
     @keyframes spin {
@@ -855,7 +903,7 @@
         <span class="meta-item">🔄 <strong>Updated Dec 2024</strong></span>
       </div>
       
-      <a href="https://github.com/AungMyoKyaw/myanmar-dhamma-catalog/releases/latest/download/dhamma.db" class="btn btn-primary" id="downloadBtn">
+      <a href="https://aungmyokyaw.github.io/myanmar-dhamma-catalog/dhamma.db" class="btn btn-primary" id="downloadBtn">
         <span>⬇</span> Download dhamma.db
       </a>
       
@@ -941,7 +989,7 @@
     
     <p class="footer-credit">
       Data sourced from <a href="https://www.dhammadownload.com">dhammadownload.com</a> with permission.<br>
-      🙏 Sadhu! Sadhu! Sadhu! 🙏
+      <i data-lucide="hand-heart"></i> Sadhu! Sadhu! Sadhu! <i data-lucide="hand-heart"></i>
     </p>
   </footer>
 
@@ -967,13 +1015,12 @@
           locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/${file}`
         });
 
-        // Fetch the database file - try local first, then GitHub
+        // Fetch the database file - try local first, then GitHub Pages
         let response;
         const dbUrls = [
           './dhamma.db',  // Local/GitHub Pages
           'dhamma.db',    // Relative
-          'https://raw.githubusercontent.com/AungMyoKyaw/myanmar-dhamma-catalog/main/docs/dhamma.db', // GitHub raw docs
-          'https://raw.githubusercontent.com/AungMyoKyaw/myanmar-dhamma-catalog/main/dhamma.db' // GitHub raw root
+          'https://aungmyokyaw.github.io/myanmar-dhamma-catalog/dhamma.db'  // GitHub Pages fallback
         ];
         
         for (const url of dbUrls) {
@@ -1098,12 +1145,15 @@
             <span class="result-type ${r.type}">${r.type}</span>
             <span style="font-size: 0.75rem; color: rgba(251,248,241,0.5);">${r.language}</span>
             <div class="result-title">${escapeHtml(r.title)}</div>
-            ${r.teacher_name ? `<div class="result-meta">👨‍🏫 ${escapeHtml(r.teacher_name)}</div>` : ''}
+            ${r.teacher_name ? `<div class="result-meta"><i data-lucide="user" style="width:14px;height:14px;display:inline;vertical-align:middle;"></i> ${escapeHtml(r.teacher_name)}</div>` : ''}
             <a href="${escapeHtml(r.url)}" target="_blank" class="result-link">${escapeHtml(r.url)}</a>
           </div>
         `).join('');
 
         countEl.textContent = `Showing ${results.length} results (limited to 100)`;
+
+        // Re-render Lucide icons for dynamic content
+        lucide.createIcons();
 
       } catch (e) {
         console.error('Search error:', e);
@@ -1147,6 +1197,7 @@
     });
 
     // Initialize on page load
+    lucide.createIcons();
     initDatabase();
   </script>
 </body>
