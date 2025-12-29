@@ -15,7 +15,7 @@ const DHAMMADOWNLOAD_URL = 'https://dhammadownload.com';
 
 // Rate limiting
 const DELAY_MS = 500;
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Category pages to scrape
 const CATEGORY_PAGES = {
@@ -45,13 +45,13 @@ class DhammaScraper {
     this.stats = {
       teachers: 0,
       media: 0,
-      errors: 0
+      errors: 0,
     };
   }
 
   initDatabase() {
     this.db = new Database(this.dbPath);
-    
+
     // Create tables
     this.db.run(`
       -- Categories table
@@ -126,10 +126,18 @@ class DhammaScraper {
 
     // Create indexes
     this.db.run(`CREATE INDEX IF NOT EXISTS idx_media_type ON media(type)`);
-    this.db.run(`CREATE INDEX IF NOT EXISTS idx_media_language ON media(language)`);
-    this.db.run(`CREATE INDEX IF NOT EXISTS idx_media_teacher ON media(teacher_id)`);
-    this.db.run(`CREATE INDEX IF NOT EXISTS idx_media_category ON media(category_id)`);
-    this.db.run(`CREATE INDEX IF NOT EXISTS idx_teachers_name ON teachers(name)`);
+    this.db.run(
+      `CREATE INDEX IF NOT EXISTS idx_media_language ON media(language)`
+    );
+    this.db.run(
+      `CREATE INDEX IF NOT EXISTS idx_media_teacher ON media(teacher_id)`
+    );
+    this.db.run(
+      `CREATE INDEX IF NOT EXISTS idx_media_category ON media(category_id)`
+    );
+    this.db.run(
+      `CREATE INDEX IF NOT EXISTS idx_teachers_name ON teachers(name)`
+    );
 
     // Prepare statements
     this.stmts = {
@@ -157,7 +165,7 @@ class DhammaScraper {
       `),
       getCollection: this.db.prepare(`
         SELECT id FROM collections WHERE name = ? AND teacher_id = ?
-      `)
+      `),
     };
 
     console.log('✓ Database initialized');
@@ -167,16 +175,17 @@ class DhammaScraper {
     try {
       const response = await fetch(url, {
         headers: {
-          'User-Agent': 'Mozilla/5.0 (compatible; DhammaCatalog/1.0; +https://github.com/aungmyokyaw/myanmar-dhamma-catalog)',
-          'Accept': 'text/html,application/xhtml+xml',
+          'User-Agent':
+            'Mozilla/5.0 (compatible; DhammaCatalog/1.0; +https://github.com/aungmyokyaw/myanmar-dhamma-catalog)',
+          Accept: 'text/html,application/xhtml+xml',
           'Accept-Language': 'en-US,en;q=0.9,my;q=0.8',
-        }
+        },
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
-      
+
       const html = await response.text();
       return load(html);
     } catch (error) {
@@ -203,9 +212,9 @@ class DhammaScraper {
     const datePatterns = [
       /(\d{1,2}[-/]\d{1,2}[-/]\d{2,4})/,
       /(\d{4}[-/]\d{1,2}[-/]\d{1,2})/,
-      /(\d{1,2}\s*-\s*\d{1,2}\s*-\s*\d{2,4})/
+      /(\d{1,2}\s*-\s*\d{1,2}\s*-\s*\d{2,4})/,
     ];
-    
+
     let date = null;
     for (const pattern of datePatterns) {
       const match = text.match(pattern);
@@ -220,7 +229,7 @@ class DhammaScraper {
       /(?:at\s+)?([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*,?\s*(?:Singapore|Australia|Malaysia|Myanmar|USA|UK))/i,
       /(BBT|BDMS|BSV)[,\s]+(\w+)/i,
     ];
-    
+
     let location = null;
     for (const pattern of locationPatterns) {
       const match = text.match(pattern);
@@ -235,7 +244,7 @@ class DhammaScraper {
 
   async scrapeTeacherPage(url, teacherName, language, type) {
     console.log(`  → Scraping teacher: ${teacherName}`);
-    
+
     const $ = await this.fetchPage(url);
     if (!$) return [];
 
@@ -247,9 +256,11 @@ class DhammaScraper {
       const href = $(el).attr('href');
       if (!href) return;
 
-      const fullUrl = href.startsWith('http') ? href : 
-                      href.startsWith('/') ? `${BASE_URL}${href}` :
-                      `${DHAMMADOWNLOAD_URL}/${href}`;
+      const fullUrl = href.startsWith('http')
+        ? href
+        : href.startsWith('/')
+          ? `${BASE_URL}${href}`
+          : `${DHAMMADOWNLOAD_URL}/${href}`;
 
       const mediaType = this.getMediaType(fullUrl);
       if (!mediaType) return;
@@ -280,7 +291,7 @@ class DhammaScraper {
         date_recorded: date,
         location: location,
         collection: currentCollection,
-        source_page: url
+        source_page: url,
       });
     });
 
@@ -288,12 +299,16 @@ class DhammaScraper {
   }
 
   async scrapeCategoryPage(categoryKey, url) {
-    const [type, lang] = categoryKey.replace(/([A-Z])/g, ' $1').trim().toLowerCase().split(' ');
+    const [type, lang] = categoryKey
+      .replace(/([A-Z])/g, ' $1')
+      .trim()
+      .toLowerCase()
+      .split(' ');
     const language = lang === 'english' ? 'english' : 'myanmar';
     const mediaType = type === 'ebook' ? 'ebook' : type;
 
     console.log(`\n📁 Scraping ${type} (${language})...`);
-    
+
     const $ = await this.fetchPage(url);
     if (!$) return;
 
@@ -306,32 +321,38 @@ class DhammaScraper {
     $('a').each((_, el) => {
       const href = $(el).attr('href');
       const text = $(el).text().trim();
-      
+
       if (!href || !text) return;
-      
+
       // Skip navigation and utility links
-      if (href.includes('index.htm') || 
-          href.includes('contact.htm') ||
-          href.includes('facebook.com') ||
-          href.includes('Suggestion') ||
-          href.includes('usefullinks') ||
-          href.includes('live.htm') ||
-          href.includes('news') ||
-          href.includes('Contribute')) return;
+      if (
+        href.includes('index.htm') ||
+        href.includes('contact.htm') ||
+        href.includes('facebook.com') ||
+        href.includes('Suggestion') ||
+        href.includes('usefullinks') ||
+        href.includes('live.htm') ||
+        href.includes('news') ||
+        href.includes('Contribute')
+      )
+        return;
 
       // Check if it's a teacher/content page
-      if (href.endsWith('.htm') && 
-          !href.includes('InEnglish.htm') && 
-          !href.includes('InMyanmar.htm') &&
-          text.length > 3) {
-        
-        const fullUrl = href.startsWith('http') ? href :
-                        href.startsWith('/') ? `${BASE_URL}${href}` :
-                        `${BASE_URL}/${href}`;
+      if (
+        href.endsWith('.htm') &&
+        !href.includes('InEnglish.htm') &&
+        !href.includes('InMyanmar.htm') &&
+        text.length > 3
+      ) {
+        const fullUrl = href.startsWith('http')
+          ? href
+          : href.startsWith('/')
+            ? `${BASE_URL}${href}`
+            : `${BASE_URL}/${href}`;
 
         teacherLinks.push({
           name: text,
-          url: fullUrl
+          url: fullUrl,
         });
       }
     });
@@ -341,9 +362,11 @@ class DhammaScraper {
       const href = $(el).attr('href');
       if (!href) return;
 
-      const fullUrl = href.startsWith('http') ? href :
-                      href.startsWith('/') ? `${BASE_URL}${href}` :
-                      `${DHAMMADOWNLOAD_URL}/${href}`;
+      const fullUrl = href.startsWith('http')
+        ? href
+        : href.startsWith('/')
+          ? `${BASE_URL}${href}`
+          : `${DHAMMADOWNLOAD_URL}/${href}`;
 
       const detectedType = this.getMediaType(fullUrl);
       if (!detectedType) return;
@@ -385,9 +408,9 @@ class DhammaScraper {
 
       // Scrape teacher's content
       const mediaItems = await this.scrapeTeacherPage(
-        teacher.url, 
-        teacher.name, 
-        language, 
+        teacher.url,
+        teacher.name,
+        language,
         mediaType
       );
 
@@ -420,9 +443,9 @@ class DhammaScraper {
   async run() {
     console.log('🙏 Dhamma Download Scraper\n');
     console.log('═'.repeat(50));
-    
+
     this.initDatabase();
-    
+
     const startTime = Date.now();
 
     for (const [key, url] of Object.entries(CATEGORY_PAGES)) {
@@ -444,7 +467,7 @@ class DhammaScraper {
     // Run optimization
     console.log('\n🔧 Optimizing database...');
     this.db.exec('ANALYZE');
-    
+
     this.db.close();
     console.log('✓ Done! 🙏');
   }
@@ -459,72 +482,107 @@ class DhammaQuery {
   // Search media by text (simple LIKE search)
   search(query, limit = 50) {
     const searchPattern = `%${query}%`;
-    return this.db.prepare(`
+    return this.db
+      .prepare(
+        `
       SELECT m.*, t.name as teacher_name, c.name as category_name
       FROM media m
       LEFT JOIN teachers t ON m.teacher_id = t.id
       LEFT JOIN categories c ON m.category_id = c.id
       WHERE m.title LIKE ? OR m.description LIKE ?
       LIMIT ?
-    `).all(searchPattern, searchPattern, limit);
+    `
+      )
+      .all(searchPattern, searchPattern, limit);
   }
 
   // Get all media by type
   getByType(type, language = null, limit = 100) {
     if (language) {
-      return this.db.prepare(`
+      return this.db
+        .prepare(
+          `
         SELECT m.*, t.name as teacher_name
         FROM media m
         LEFT JOIN teachers t ON m.teacher_id = t.id
         WHERE m.type = ? AND m.language = ?
         LIMIT ?
-      `).all(type, language, limit);
+      `
+        )
+        .all(type, language, limit);
     }
-    return this.db.prepare(`
+    return this.db
+      .prepare(
+        `
       SELECT m.*, t.name as teacher_name
       FROM media m
       LEFT JOIN teachers t ON m.teacher_id = t.id
       WHERE m.type = ?
       LIMIT ?
-    `).all(type, limit);
+    `
+      )
+      .all(type, limit);
   }
 
   // Get all teachers
   getTeachers() {
-    return this.db.prepare(`
+    return this.db
+      .prepare(
+        `
       SELECT t.*, COUNT(m.id) as media_count
       FROM teachers t
       LEFT JOIN media m ON m.teacher_id = t.id
       GROUP BY t.id
       ORDER BY media_count DESC
-    `).all();
+    `
+      )
+      .all();
   }
 
   // Get media by teacher
   getByTeacher(teacherId, type = null) {
     if (type) {
-      return this.db.prepare(`
+      return this.db
+        .prepare(
+          `
         SELECT * FROM media WHERE teacher_id = ? AND type = ?
         ORDER BY title
-      `).all(teacherId, type);
+      `
+        )
+        .all(teacherId, type);
     }
-    return this.db.prepare(`
+    return this.db
+      .prepare(
+        `
       SELECT * FROM media WHERE teacher_id = ?
       ORDER BY type, title
-    `).all(teacherId);
+    `
+      )
+      .all(teacherId);
   }
 
   // Get statistics
   getStats() {
     return {
-      totalMedia: this.db.prepare('SELECT COUNT(*) as count FROM media').get().count,
-      totalTeachers: this.db.prepare('SELECT COUNT(*) as count FROM teachers').get().count,
-      byType: this.db.prepare(`
+      totalMedia: this.db.prepare('SELECT COUNT(*) as count FROM media').get()
+        .count,
+      totalTeachers: this.db
+        .prepare('SELECT COUNT(*) as count FROM teachers')
+        .get().count,
+      byType: this.db
+        .prepare(
+          `
         SELECT type, COUNT(*) as count FROM media GROUP BY type
-      `).all(),
-      byLanguage: this.db.prepare(`
+      `
+        )
+        .all(),
+      byLanguage: this.db
+        .prepare(
+          `
         SELECT language, COUNT(*) as count FROM media GROUP BY language
-      `).all()
+      `
+        )
+        .all(),
     };
   }
 
@@ -536,7 +594,7 @@ class DhammaQuery {
 // CLI interface
 async function main() {
   const args = process.argv.slice(2);
-  
+
   if (args.includes('--help') || args.includes('-h')) {
     console.log(`
 Dhamma Download Scraper
@@ -568,9 +626,11 @@ Options:
     console.log(`   Total Media: ${stats.totalMedia}`);
     console.log(`   Total Teachers: ${stats.totalTeachers}`);
     console.log('\n   By Type:');
-    stats.byType.forEach(r => console.log(`     ${r.type}: ${r.count}`));
+    stats.byType.forEach((r) => console.log(`     ${r.type}: ${r.count}`));
     console.log('\n   By Language:');
-    stats.byLanguage.forEach(r => console.log(`     ${r.language}: ${r.count}`));
+    stats.byLanguage.forEach((r) =>
+      console.log(`     ${r.language}: ${r.count}`)
+    );
     query.close();
     return;
   }
@@ -589,7 +649,7 @@ Options:
     const query = new DhammaQuery(dbPath);
     const results = query.search(searchQuery);
     console.log(`\n🔍 Search results for "${searchQuery}":\n`);
-    results.forEach(r => {
+    results.forEach((r) => {
       console.log(`  ${r.type.toUpperCase()} | ${r.title}`);
       console.log(`    URL: ${r.url}`);
       if (r.teacher_name) console.log(`    Teacher: ${r.teacher_name}`);
@@ -607,7 +667,7 @@ Options:
     const query = new DhammaQuery(dbPath);
     const teachers = query.getTeachers();
     console.log('\n👨‍🏫 Teachers:\n');
-    teachers.forEach(t => {
+    teachers.forEach((t) => {
       console.log(`  ${t.name} (${t.media_count} items)`);
     });
     query.close();

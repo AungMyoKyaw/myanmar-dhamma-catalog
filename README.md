@@ -84,14 +84,14 @@ SELECT * FROM media WHERE title LIKE '%meditation%';
 SELECT * FROM media WHERE type = 'audio' AND language = 'english';
 
 -- Get all content by a teacher
-SELECT m.* 
-FROM media m 
-JOIN teachers t ON m.teacher_id = t.id 
+SELECT m.*
+FROM media m
+JOIN teachers t ON m.teacher_id = t.id
 WHERE t.name LIKE '%U Jotika%';
 
 -- Get statistics
-SELECT type, language, COUNT(*) as count 
-FROM media 
+SELECT type, language, COUNT(*) as count
+FROM media
 GROUP BY type, language;
 ```
 
@@ -131,6 +131,7 @@ query.close();
 This scraper collects publicly available Buddhist dhamma content from [dhammadownload.com](https://www.dhammadownload.com), which provides free access to these resources for the benefit of all beings.
 
 The website explicitly states:
+
 > "ယ္ခု ဓမ္မဒေါင်းလုပ် website မှ တရားတော်များ၏ URL Link များကို မိမိတို့၏ ကိုယ်ပိုင် website မှ တိုက်ရိုက် ပြန်လည် Link လုပ်၍ အသုံးပြုလိုပါက ခွင့်ပြူပါကြောင်း အသိပေးအပ်ပါသည်။"
 >
 > (Translation: "We hereby grant permission to directly link to the dhamma content URLs from this website on your own website.")
