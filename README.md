@@ -1,276 +1,146 @@
-# Myanmar Dhamma Catalog 🙏
+# Myanmar Dhamma Catalog
 
-A comprehensive catalog of Myanmar Buddhist dhamma content, creating structured datasets from Buddhist educational resources.
+A scraper and SQLite database builder for [dhammadownload.com](https://www.dhammadownload.com) - a comprehensive collection of Theravada Buddhist dhamma talks, videos, and ebooks.
 
-## 🎯 Overview
+## Features
 
-This project scrapes metadata from Buddhist content websites (specifically dhammadownload.com) to create a structured dataset of Myanmar dhamma resources including:
+- 🎧 Scrapes audio content (MP3, WMA)
+- 🎬 Scrapes video content (MP4, WMV)
+- 📚 Scrapes ebooks (PDF)
+- 🗄️ Builds a SQLite database with full-text search
+- 🔍 Search across all content
+- 👨‍🏫 Organized by teachers/speakers
 
-- 🎵 Audio teachings and discourses
-- 🎥 Video content and lectures
-- 📚 E-books and written materials
-- 📖 Abhidhamma texts and commentaries
+## Requirements
 
-The goal is to preserve and catalog Myanmar Buddhist educational content in accessible formats (CSV and SQLite database) for researchers, practitioners, and developers.
+- [Bun](https://bun.sh) runtime (uses Bun's native SQLite)
 
-## ✨ Features
-
-- **Respectful Web Scraping**: Implements proper delays and follows best practices
-- **Multiple Output Formats**: Generates both CSV and SQLite database
-- **Rich Metadata**: Extracts titles, speakers, content types, categories, and descriptions
-- **Comprehensive Analytics**: Provides detailed analysis and quality metrics
-- **Data Validation**: Ensures data quality and identifies duplicates
-- **Interactive Web App**: Modern Next.js application for data exploration and management
-- **TypeScript**: Fully typed codebase for reliability
-
-## 🚀 Quick Start
-
-### Prerequisites
-
-- Node.js 16+
-- npm or yarn
-
-### Installation
+## Installation
 
 ```bash
-# Clone the repository
-git clone https://github.com/AungMyoKyaw/myanmar-dhamma-catalog.git
-cd myanmar-dhamma-catalog
-
-# Install dependencies
-npm install
+bun install
 ```
 
-### Data Pipeline Usage
+## Usage
 
-Run the complete data pipeline:
+### Run the Scraper
 
 ```bash
-npm run all
+bun run scrape
+# or
+bun scraper.js
 ```
 
-Or run individual steps:
+This will create a `dhamma.db` SQLite database in the current directory.
+
+### View Statistics
 
 ```bash
-# 1. Scrape content from websites
-npm run scrape
-
-# 2. Generate CSV dataset
-npm run generate-csv
-
-# 3. Build SQLite database
-npm run build-db
-
-# 4. Generate analytics and reports
-npm run analytics
+bun run stats
+# or
+bun scraper.js --stats
 ```
 
-### Web Application Usage
-
-Launch the interactive web interface:
+### Search Content
 
 ```bash
-# Navigate to the web app
-cd data-preview-app
-
-# Install app dependencies
-npm install
-
-# Start the development server
-npm run dev
+bun scraper.js --search "meditation"
+bun scraper.js --search "vipassana"
 ```
 
-Then visit [http://localhost:3000](http://localhost:3000) to explore the data interactively.
-
-## 📁 Project Structure
-
-```
-myanmar-dhamma-catalog/
-├── src/
-│   ├── types.ts           # TypeScript interfaces
-│   ├── scraper.ts         # Web scraping logic
-│   ├── csvGenerator.ts    # CSV dataset generation
-│   ├── sqliteBuilder.ts   # SQLite database creation
-│   └── analytics.ts       # Analytics and reporting
-├── data/
-│   ├── raw/               # Raw scraped data
-│   ├── dhamma_dataset.csv # Main CSV dataset
-│   ├── dhamma_dataset.db  # SQLite database
-│   └── analytics_report.md # Analytics report
-├── data-preview-app/      # Next.js web application
-│   ├── src/               # Application source code
-│   ├── public/            # Static assets
-│   └── package.json       # App dependencies
-├── docs/
-│   └── project-plan.md    # Detailed project plan
-└── package.json
-```
-
-## 📊 Generated Output
-
-### 📥 Dataset Downloads
-
-Download the pre-built datasets:
-
-- **CSV Format**: [`dhamma_dataset.csv`](./data/dhamma_dataset.csv) - Structured spreadsheet format for analysis and import
-- **SQLite Database**: [`dhamma_dataset.db`](./data/dhamma_dataset.db) - Queryable database with indexed tables
-
-### CSV Dataset (`data/dhamma_dataset.csv`)
-
-Structured dataset with columns:
-
-- ID, Title, Speaker, Content Type
-- File URL, Language, Category
-- Description, Source Page, Scraped Date
-
-### SQLite Database (`data/dhamma_dataset.db`)
-
-Queryable database with:
-
-- Indexed tables for fast searching
-- Support for complex queries
-- Data integrity constraints
-
-### Analytics Report (`data/analytics_report.md`)
-
-Comprehensive analysis including:
-
-- Content distribution statistics
-- Speaker and category analysis
-- Data quality metrics
-- URL pattern analysis
-
-## 🌐 Data Preview Web App
-
-The project includes a modern Next.js web application for interactive data exploration and management:
-
-### ✨ Key Features
-
-- **📊 Interactive Dashboard**: Real-time database statistics, recent items, and quality metrics
-- **🔍 Advanced Search**: Filter content by speaker, category, content type, and keywords
-- **📋 Browse & Manage**: Paginated table view with sorting and filtering capabilities
-- **✏️ Content Editing**: Update metadata, titles, speakers, and descriptions
-- **📈 Analytics Views**: Speaker directories, category distributions, and quality reports
-- **🔧 Data Validation**: Automated quality checks for missing or invalid data
-
-### 🚀 Quick Start (Web App)
+### List Teachers
 
 ```bash
-# Navigate to the app directory
-cd data-preview-app
-
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
+bun run teachers
+# or
+bun scraper.js --teachers
 ```
 
-Visit [http://localhost:3000](http://localhost:3000) to access the web interface.
-
-### 📱 App Pages
-
-- **Dashboard** (`/`) - Overview with statistics and recent items
-- **Browse** (`/browse`) - Table view of all content with filters
-- **Search** (`/search`) - Advanced search interface
-- **Speakers** (`/speakers`) - Speaker directory with content counts
-- **Categories** (`/categories`) - Category browser and statistics
-- **Quality** (`/quality`) - Data quality reports and issue tracking
-- **Edit** (`/edit/[id]`) - Individual content metadata editing
-
-### 🛠️ Technology Stack
-
-- **Framework**: Next.js 14 with App Router and TypeScript
-- **Styling**: Tailwind CSS with shadcn/ui components
-- **Database**: SQLite with better-sqlite3 for fast queries
-- **Forms**: React Hook Form with Zod validation
-- **Icons**: Lucide React for modern iconography
-
-## 🔍 Data Sources
-
-Currently scrapes from:
-
-- `AudioInMyanmar.htm` - Audio teachings
-- `VideoInMyanmar.htm` - Video content
-- `EBooksInMyanmar.htm` - Digital books
-- `AbhidhammaInMyanmar.htm` - Abhidhamma texts
-
-## 📈 Sample Analytics
+### Custom Database Path
 
 ```bash
-📊 Total Items: 1,247
-📑 Content Types: audio (856), ebook (248), video (143)
-🎤 Top Speakers: Sayadaw U Pandita (127), Mogok Sayadaw (98)
-🌐 Languages: Myanmar (1,247)
-✅ Data Quality: 95% complete metadata
+bun scraper.js --db /path/to/custom.db
 ```
 
-## 🛠️ Development
+## Database Schema
 
-### Adding New Sources
+### Tables
 
-1. Add URLs to `baseUrls` in `src/scraper.ts`
-2. Update content extraction logic if needed
-3. Test with small samples first
+- **categories** - Content categories (Audio/Video/eBook in English/Myanmar)
+- **teachers** - Buddhist teachers and speakers
+- **media** - All media items (audio, video, ebooks)
+- **collections** - Series or disc collections
+- **media_collections** - Many-to-many mapping for collections
 
-### Customizing Output
+### Example Queries
 
-- Modify CSV headers in `src/csvGenerator.ts`
-- Update database schema in `src/sqliteBuilder.ts`
-- Add new analytics in `src/analytics.ts`
+```sql
+-- Search for content
+SELECT * FROM media WHERE title LIKE '%meditation%';
 
-## 📝 Scripts Reference
+-- Get all audio by language
+SELECT * FROM media WHERE type = 'audio' AND language = 'english';
 
-### Core Data Pipeline
+-- Get all content by a teacher
+SELECT m.* 
+FROM media m 
+JOIN teachers t ON m.teacher_id = t.id 
+WHERE t.name LIKE '%U Jotika%';
 
-| Script                 | Description                      |
-| ---------------------- | -------------------------------- |
-| `npm run scrape`       | Scrape content from websites     |
-| `npm run generate-csv` | Create CSV dataset from raw data |
-| `npm run build-db`     | Build SQLite database            |
-| `npm run analytics`    | Generate comprehensive analytics |
-| `npm run all`          | Run complete pipeline            |
+-- Get statistics
+SELECT type, language, COUNT(*) as count 
+FROM media 
+GROUP BY type, language;
+```
 
-### Web App (data-preview-app/)
+## API Usage
 
-| Script          | Description                    |
-| --------------- | ------------------------------ |
-| `npm run dev`   | Start development server       |
-| `npm run build` | Build production application   |
-| `npm run start` | Start production server        |
-| `npm run lint`  | Run ESLint code quality checks |
+```javascript
+import { DhammaQuery } from './scraper.js';
 
-## 🙏 Ethical Considerations
+const query = new DhammaQuery('./dhamma.db');
 
-This project:
+// Search
+const results = query.search('meditation');
 
-- ✅ Respects robots.txt and website policies
-- ✅ Implements respectful scraping delays
-- ✅ Does not download actual media files
-- ✅ Only extracts publicly available metadata
-- ✅ Aims to preserve and organize cultural content
+// Get by type
+const audio = query.getByType('audio', 'english');
 
-## 📄 License
+// Get teachers
+const teachers = query.getTeachers();
 
-MIT License - See LICENSE file for details.
+// Get statistics
+const stats = query.getStats();
 
-## 🤝 Contributing
+query.close();
+```
 
-Contributions are welcome! Please:
+## Statistics (as of latest scrape)
 
-1. Fork the repository
-2. Create a feature branch
-3. Add tests for new functionality
-4. Submit a pull request
+- **Total Media Items**: ~29,000
+- **Audio**: ~21,400
+- **Video**: ~6,300
+- **eBooks**: ~1,100
+- **Teachers**: ~210+
+- **Languages**: English & Myanmar
 
-## 🐛 Issues
+## Data Source
 
-Found a bug or have a feature request? Please open an issue on GitHub.
+This scraper collects publicly available Buddhist dhamma content from [dhammadownload.com](https://www.dhammadownload.com), which provides free access to these resources for the benefit of all beings.
 
-## 📞 Support
+The website explicitly states:
+> "ယ္ခု ဓမ္မဒေါင်းလုပ် website မှ တရားတော်များ၏ URL Link များကို မိမိတို့၏ ကိုယ်ပိုင် website မှ တိုက်ရိုက် ပြန်လည် Link လုပ်၍ အသုံးပြုလိုပါက ခွင့်ပြူပါကြောင်း အသိပေးအပ်ပါသည်။"
+>
+> (Translation: "We hereby grant permission to directly link to the dhamma content URLs from this website on your own website.")
 
-For questions about Buddhist content or technical issues, please open a GitHub issue.
+## License
 
----
+MIT
 
-_May this project contribute to the preservation and accessibility of Buddhist teachings for the benefit of all beings._ 🙏
+## Acknowledgments
+
+🙏 Sadhu! Sadhu! Sadhu! 🙏
+
+With deep gratitude to all the venerable teachers whose dhamma teachings are preserved and shared on dhammadownload.com, and to the dedicated volunteers who maintain the website for the benefit of all beings.
+
+May all beings be happy! May all beings be free from suffering!

@@ -1,3 +1,31 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:de695922f8f1cf54f5b73d5ab5769a6e74bd411fde4894ca74eeebe0e3d1caae
-size 1447
+{
+  "name": "myanmar-dhamma-catalog",
+  "version": "1.0.0",
+  "description": "Scraper and SQLite database builder for dhammadownload.com - a collection of Theravada Buddhist dhamma talks, videos, and ebooks",
+  "main": "scraper.js",
+  "type": "module",
+  "scripts": {
+    "scrape": "bun scraper.js",
+    "stats": "bun scraper.js --stats",
+    "search": "bun scraper.js --search",
+    "teachers": "bun scraper.js --teachers",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "keywords": [
+    "dhamma",
+    "buddhism",
+    "theravada",
+    "myanmar",
+    "scraper",
+    "sqlite"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "cheerio": "^1.1.2"
+  },
+  "devDependencies": {
+    "prettier": "^3.7.4"
+  }
+}

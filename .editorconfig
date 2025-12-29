@@ -1,66 +1,69 @@
-# EditorConfig is awesome: https://EditorConfig.org
+# EditorConfig for consistent coding styles
+# https://editorconfig.org
 
-# Top-most EditorConfig file
 root = true
 
-# All files
+# Default settings for all files
 [*]
 charset = utf-8
 end_of_line = lf
 insert_final_newline = true
 trim_trailing_whitespace = true
-
-# Code files - 2 spaces
-[*.{js,ts,jsx,tsx,json,yml,yaml}]
 indent_style = space
 indent_size = 2
 
-# Web files - 2 spaces
-[*.{html,css,scss,sass,less,vue}]
+# JavaScript/TypeScript
+[*.{js,ts,jsx,tsx,mjs,cjs}]
 indent_style = space
 indent_size = 2
 
-# Config files - 2 spaces
-[*.{json,yml,yaml,toml}]
+# JSON files
+[*.json]
 indent_style = space
 indent_size = 2
 
-# Documentation - 2 spaces
-[*.{md,mdx}]
-indent_style = space
-indent_size = 2
+# Markdown files
+[*.md]
 trim_trailing_whitespace = false
-
-# Package files
-[package.json]
 indent_style = space
 indent_size = 2
 
-# TypeScript config
-[tsconfig.json]
+# YAML files
+[*.{yml,yaml}]
 indent_style = space
 indent_size = 2
 
-# CSV files - keep as is for data integrity
-[*.csv]
-trim_trailing_whitespace = false
+# HTML/CSS
+[*.{html,htm,css,scss,less}]
+indent_style = space
+indent_size = 2
 
-# Makefiles - override default (usually tabs) to use 2 spaces
-[{Makefile,makefile,*.mk}]
+# SQL
+[*.{sql}]
 indent_style = space
 indent_size = 2
 
 # Shell scripts
-[*.{sh,bash,zsh}]
+[*.sh]
 indent_style = space
 indent_size = 2
+end_of_line = lf
 
-# Python files (if any) - override PEP 8 to use 2 spaces
+# Python (if you add Python later)
 [*.py]
 indent_style = space
-indent_size = 2
+indent_size = 4
 
-# SQL files
-[*.sql]
+# Makefile requires tabs
+[Makefile]
+indent_style = tab
+
+# Rust (if you add Rust later)
+[*.rs]
 indent_style = space
-indent_size = 2
+indent_size = 4
+
+# Go (if you add Go later)
+[*.go]
+indent_style = tab
+indent_size = 4
